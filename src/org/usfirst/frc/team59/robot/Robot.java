@@ -15,29 +15,24 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Robot extends IterativeRobot {
 
+	Joystick MC = new Joystick(0);// Main Controller
+	Joystick SC = new Joystick(1);// Secondary Controller
+
+	// PWM Talon
 	SpeedController leftDrive = new Talon(1);
 	SpeedController rightDrive = new Talon(0);
-
-	NewRobotDrive DR = new NewRobotDrive(leftDrive, rightDrive); /* DR = drive */
-
-	Joystick MC = new Joystick(0);// main controller setup//
-	Joystick SC = new Joystick(1);// secondary controller setup//
-
+	
+	// CAN TalonSRX
 	WPI_TalonSRX LIFT1 = new WPI_TalonSRX(1);
 	WPI_TalonSRX LIFT2 = new WPI_TalonSRX(2);
-	WPI_TalonSRX SR = new WPI_TalonSRX(3);// spinner motor on right side
-	WPI_TalonSRX SL = new WPI_TalonSRX(4);// spinner motor on left side
-	WPI_TalonSRX GL = new WPI_TalonSRX(5);// gripper arm motor on left side
-	WPI_TalonSRX GR = new WPI_TalonSRX(6);// gripper arm motor on right side
+	WPI_TalonSRX SR = new WPI_TalonSRX(3);// Spinner motor on right side 
+	WPI_TalonSRX SL = new WPI_TalonSRX(4);// Spinner motor on left side
+	WPI_TalonSRX GL = new WPI_TalonSRX(5);// Gripper arm motor on left side
+	WPI_TalonSRX GR = new WPI_TalonSRX(6);// Gripper arm motor on right side
+	
+	NewRobotDrive DR = new NewRobotDrive(leftDrive, rightDrive); 
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
@@ -63,13 +58,15 @@ public class Robot extends IterativeRobot {
 
 		if (autonomousCommand != null)
 			autonomousCommand.start();
-		Scheduler.getInstance().run(); // autonomous = true; // Timer.delay(4.25); //
+		Scheduler.getInstance().run();
 		
 		boolean defaultBool = false;
 		
 		boolean BUTTON1 = SmartDashboard.getBoolean("DB/Button 1", defaultBool);
 		boolean BUTTON2 = SmartDashboard.getBoolean("DB/Button 2", defaultBool);
 
+		
+		// Drive forward and push the tote onto the platform
 		if (BUTTON1 == true) {
 			SmartDashboard.putBoolean("DB/LED 1", true);
 			SmartDashboard.putString("DB/String 0", "Just Drive and push");
@@ -79,7 +76,10 @@ public class Robot extends IterativeRobot {
 			Timer.delay(3);
 			DR.Drive(0.0, 0.0);
 
-		} else if (BUTTON2 == true) {
+		} 
+		
+		// Pick up the tote and drive towards platform
+		else if (BUTTON2 == true) {
 			SmartDashboard.putBoolean("DB/LED 2", true);
 			SmartDashboard.putString("DB/String 1", "Pick Up tote");
 			DR.setSafetyEnabled(false);
@@ -137,59 +137,16 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousPeriodic() {
 
-		// if (autonomous == true)
-		// {
-		// DR.setSafetyEnabled(false);
-		// DR.Drive(0.0,0.0);
-		// DR.Drive(0.41, 0.45);
-		// }
-		// else if(autonomous == false)
-		// {
-		// DR.Drive(0.0, 0.0);
-		// }
-
 	}
 
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		// if (autonomousCommand != null)
-		// DR.setSafetyEnabled(false);
-		// SmartDashboard.putString("DB/String 0", "");
-		// SmartDashboard.putString("DB/String 1", "");
 
-		String DB5 = SmartDashboard.getString("DB/String 5", "");
-
-		if (DB5.equals("Tele-op Return") == true) {
-			SmartDashboard.putString("DB/String 5", "Returning");
-			DR.setSafetyEnabled(false);
-			DR.Drive(0.30, -0.30);
-			Timer.delay(1.5);
-			DR.Drive(0, 0);
-			Timer.delay(1.1);
-			DR.Drive(0.36, 0.40);
-			Timer.delay(2);
-			DR.Drive(0, 0);
-			SmartDashboard.putString("DB/String 5", "Returned");
-			autonomousCommand.cancel();
-		} else {
-			SmartDashboard.putString("DB/String 0", "");
-			SmartDashboard.putString("DB/String 1", "");
-			SmartDashboard.putString("DB/String 5", "");
-			SmartDashboard.putString("DB/String 6", "");
-			autonomousCommand.cancel();
-		}
-
-		// DR.setSafetyEnabled(false);
-		// DR.Drive(0.30, -0.30);
-		// Timer.delay(1.5);
-		// DR.Drive(0, 0);
-		// Timer.delay(1.1);
-		// DR.Drive(0.36,0.40);
-		// Timer.delay(2);
-		// DR.Drive(0,0);
+		// Clear Smart Dashboard
+		SmartDashboard.putString("DB/String 0", "");
+		SmartDashboard.putString("DB/String 1", "");
+		SmartDashboard.putString("DB/String 5", "");
+		SmartDashboard.putString("DB/String 6", "");
+		autonomousCommand.cancel();
 
 	}
 
