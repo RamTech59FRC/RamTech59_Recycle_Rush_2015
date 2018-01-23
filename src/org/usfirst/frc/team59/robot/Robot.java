@@ -1,17 +1,17 @@
 
 package org.usfirst.frc.team59.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.usfirst.frc.team59.robot.commands.ExampleCommand;
 import org.usfirst.frc.team59.robot.subsystems.ExampleSubsystem;
 
-import edu.wpi.first.wpilibj.*;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -21,33 +21,21 @@ import edu.wpi.first.wpilibj.*;
  */
 public class Robot extends IterativeRobot {
 
+	SpeedController leftDrive = new Talon(1);
+	SpeedController rightDrive = new Talon(0);
 
-
-	NewRobotDrive DR = new NewRobotDrive(1,0); /* DR = drive*/
+	NewRobotDrive DR = new NewRobotDrive(leftDrive, rightDrive); /* DR = drive*/
 	
 	
 	Joystick MC = new Joystick(0);// main controller setup//
 	Joystick SC = new Joystick(1);// secondary controller setup//
 		
-    SpeedController LIFT1 = new CANTalon(1);
-    SpeedController LIFT2 = new CANTalon(2);
-    SpeedController SR = new CANTalon(3);//spinner motor on right side
-    SpeedController SL = new CANTalon(4);//spinner motor on left side
-    SpeedController GL = new CANTalon(5);//gripper arm motor on left side
-    SpeedController GR = new CANTalon(6);//gripper arm motor on right side
-    
-    
-
-    
-//    Servo TILT = new Servo(3);
-//    Servo PAN = new Servo(4); 
-//    double tiltAngleUp = 0;
-//	double tiltAngleDown = 0;
-//	double panAngleRight = 0;
-//	double panAngleLeft = 0;
-    
-    
- 
+    WPI_TalonSRX LIFT1 = new WPI_TalonSRX(1);
+    WPI_TalonSRX LIFT2 = new WPI_TalonSRX(2);
+    WPI_TalonSRX SR = new WPI_TalonSRX(3);//spinner motor on right side
+    WPI_TalonSRX SL = new WPI_TalonSRX(4);//spinner motor on left side
+    WPI_TalonSRX GL = new WPI_TalonSRX(5);//gripper arm motor on left side
+    WPI_TalonSRX GR = new WPI_TalonSRX(6);//gripper arm motor on right side
     
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
@@ -62,11 +50,6 @@ public class Robot extends IterativeRobot {
 		oi = new OI();
         // instantiate the command used for the autonomous period
         autonomousCommand = new ExampleCommand();
-        
-        
-      
-        
-        
     }
 	
 	public void disabledPeriodic() {
@@ -75,7 +58,7 @@ public class Robot extends IterativeRobot {
 	}
     public void autonomousInit() 
     {
-
+/*
     	if (autonomousCommand != null) autonomousCommand.start();
     	Scheduler.getInstance().run();
 //    	autonomous = true; 
@@ -149,7 +132,7 @@ public class Robot extends IterativeRobot {
 				SmartDashboard.putBoolean("DB/LED 3", false);
 				SmartDashboard.putString("DB/String 0", "No auto");
 			}
-	
+	*/
     	
     }
 
@@ -158,11 +141,7 @@ public class Robot extends IterativeRobot {
      */
     public void autonomousPeriodic() 
     {
-    	
 
-    	
-		
-    	
 //    	if (autonomous == true)
 //    		{
 //    		DR.setSafetyEnabled(false);
@@ -186,7 +165,7 @@ public class Robot extends IterativeRobot {
 //    	DR.setSafetyEnabled(false);
 //    	SmartDashboard.putString("DB/String 0", "");
 //    	SmartDashboard.putString("DB/String 1", "");
-//    	
+    	/*
     	String DB5 = SmartDashboard.getString("DB/String 5");
     	
     	if (DB5.equals("Tele-op Return")==true)
@@ -208,7 +187,7 @@ public class Robot extends IterativeRobot {
     		SmartDashboard.putString("DB/String 5", "");
     		SmartDashboard.putString("DB/String 6", "");
     		autonomousCommand.cancel();
-    	}
+    	}*/
 //    	DR.setSafetyEnabled(false);
 //    	DR.Drive(0.30, -0.30);
 //    	Timer.delay(1.5);
@@ -244,8 +223,6 @@ public class Robot extends IterativeRobot {
        
         /***************************       Drive         ***************************/
         boolean squaredInputs = true;
-        DR.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-        DR.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
         
         if(MC.getRawButton(1))//Go Back
         	{
@@ -357,43 +334,7 @@ public class Robot extends IterativeRobot {
         GL.set(GVL * limiter);
         GR.set(-GVR * limiter);
     
-        
-       
-        
-//     /*************************		Camera Servos		********************************/
-//        
-//        if (MC.getRawButton(4))//Tilt Up
-//        {
-//        	tiltAngleUp = tiltAngleUp + 5;
-//        	TILT.setAngle(tiltAngleUp);
-//        	tiltAngleDown += 5;
-//        }
-//        else if (MC.getRawButton(1))//Tilt Down
-//        {
-//        	tiltAngleDown = tiltAngleDown - 5;
-//        	TILT.setAngle(tiltAngleDown);
-//        	tiltAngleUp -= 5;
-//        }
-//        
-//        if (MC.getRawButton(2))//Turn Right
-//        {
-//        	panAngleRight = panAngleRight + 5;
-//        	PAN.setAngle(panAngleRight);
-//        	panAngleLeft += 5;
-//        }
-//        else if(MC.getRawButton(3))//Turn Left
-//        {
-//        	panAngleLeft = panAngleLeft - 5;
-//        	PAN.setAngle(panAngleLeft);
-//        	panAngleRight -= 5;
-//        }
     }
     
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-        LiveWindow.run();
-    }
 }
 
